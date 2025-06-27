@@ -17,6 +17,24 @@ pipeline {
     }
 
     stages {
+        stage('Branch Filter') {
+            when {
+                not {
+                    anyOf {
+                        branch 'main'
+                        branch 'develop'
+                    }
+                }
+            }
+            steps {
+                echo "Skipping pipeline: this branch is not 'main' or 'develop'."
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    error("Pipeline stopped early for non-target branch.")
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -50,16 +68,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'dotnet test --no-build --framework net6.0'
-            }
-        }
-
-        stage('Main/Develop Only Stage') {
-            when {
-                branch 'main'
-                branch 'develop'
-            }
-            steps {
-                echo "Running only on 'main' or 'develop' branch"
             }
         }
     }
