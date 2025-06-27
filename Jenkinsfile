@@ -18,7 +18,6 @@ pipeline {
 
     stages {
         stage('Branch Filter') {
-            echo "Current branch: ${env.BRANCH_NAME}"
             when {
                 not {
                     anyOf {
@@ -28,6 +27,7 @@ pipeline {
                 }
             }
             steps {
+                echo "Current branch: ${env.BRANCH_NAME}"
                 echo "Skipping pipeline: this branch is not 'main' or 'develop'."
                 script {
                     currentBuild.result = 'SUCCESS'
