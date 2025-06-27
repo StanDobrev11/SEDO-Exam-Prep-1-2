@@ -4,38 +4,19 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-
-    environment {
+    
+        environment {
         DOTNET_VERSION = "6.0.417"
         DOTNET_INSTALL_DIR = "${HOME}/dotnet"
         DOTNET_ROOT = "${HOME}/dotnet"
-        PATH = "${HOME}/dotnet:${PATH}"
+        PATH = "${HOME}/dotnet:${PATH}" // No `env.` here – Jenkins handles this
     }
 
-    triggers {
-        pollSCM('* * * * *')
-    }
+    // triggers {
+    //     pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
+    // }
 
     stages {
-        stage('Branch Filter') {
-            when {
-                not {
-                    anyOf {
-                        branch 'main'
-                        branch 'develop'
-                    }
-                }
-            }
-            steps {
-                echo "Current branch: ${env.BRANCH_NAME}"
-                echo "Skipping pipeline: this branch is not 'main' or 'develop'."
-                script {
-                    currentBuild.result = 'SUCCESS'
-                    error("Pipeline stopped early for non-target branch.")
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
