@@ -3,7 +3,7 @@ name: Test Exam Task 3
 on:
   push:
     branches: 
-      - develot
+      - develop
       - "feature/**"
 
 jobs:
