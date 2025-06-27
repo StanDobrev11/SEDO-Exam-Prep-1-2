@@ -4,24 +4,19 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-    
+
     environment {
         DOTNET_VERSION = "6.0.417"
         DOTNET_INSTALL_DIR = "${HOME}/dotnet"
         DOTNET_ROOT = "${HOME}/dotnet"
-        PATH = "${HOME}/dotnet:${PATH}" // No `env.` here – Jenkins handles this
+        PATH = "${HOME}/dotnet:${PATH}"
     }
 
     triggers {
-        pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
+        pollSCM('* * * * *')
     }
 
-    stage('Main/Develop Only Stage') {
-        when {
-            branch 'main'
-            branch 'develop'
-        }
-        
+    stages {
         stage('Checkout') {
             steps {
                 checkout scm
@@ -55,6 +50,16 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'dotnet test --no-build --framework net6.0'
+            }
+        }
+
+        stage('Main/Develop Only Stage') {
+            when {
+                branch 'main'
+                branch 'develop'
+            }
+            steps {
+                echo "Running only on 'main' or 'develop' branch"
             }
         }
     }
