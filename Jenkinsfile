@@ -16,7 +16,12 @@ pipeline {
         pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
     }
 
-    stages {
+    stage('Main/Develop Only Stage') {
+        when {
+            branch 'main'
+            branch 'develop'
+        }
+        
         stage('Checkout') {
             steps {
                 checkout scm
