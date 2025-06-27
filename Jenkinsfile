@@ -18,6 +18,7 @@ pipeline {
 
     stages {
         stage('Branch Filter') {
+            echo "Current branch: ${env.BRANCH_NAME}"
             when {
                 not {
                     anyOf {
