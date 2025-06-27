@@ -4,6 +4,13 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
+    
+    environment {
+        DOTNET_VERSION = "6.0.417"
+        DOTNET_INSTALL_DIR = "${HOME}/dotnet"
+        DOTNET_ROOT = "${HOME}/dotnet"
+        PATH = "${HOME}/dotnet:${PATH}" // No `env.` here – Jenkins handles this
+    }
 
     triggers {
         pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
@@ -19,16 +26,10 @@ pipeline {
         stage('Setup .NET') {
             steps {
                 sh '''
-                    DOTNET_VERSION=6.0.417
-
                     echo "Installing .NET SDK $DOTNET_VERSION..."
                     wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -O dotnet-install.sh
                     chmod +x dotnet-install.sh
-                    ./dotnet-install.sh --version $DOTNET_VERSION --install-dir $HOME/dotnet
-
-                    # Add to PATH
-                    export PATH=$HOME/dotnet:$PATH
-                    echo "DOTNET_ROOT=$HOME/dotnet" >> $GITHUB_ENV || true
+                    ./dotnet-install.sh --version $DOTNET_VERSION --install-dir $DOTNET_INSTALL_DIR
                     dotnet --info
                 '''
             }
@@ -48,7 +49,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'dotnet test --no-build'
+                sh 'dotnet test --no-build --framework net6.0'
             }
         }
     }
