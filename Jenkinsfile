@@ -12,9 +12,9 @@ pipeline {
         PATH = "${HOME}/dotnet:${PATH}" // No `env.` here – Jenkins handles this
     }
 
-    // triggers {
-    //     pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
-    // }
+    triggers {
+        pollSCM('* * * * *')  // Optional: can remove if using GitHub webhooks
+    }
 
     stages {
         stage('Checkout') {
